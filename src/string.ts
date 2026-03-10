@@ -1,0 +1,293 @@
+/**
+ * 首字母大写
+ * @param str - 输入字符串
+ * @returns 首字母大写的字符串
+ * @example
+ * capitalize('hello') // 'Hello'
+ */
+export function capitalize(str: string): string {
+    if (!str) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * 反转义字符串
+ * @param str
+ * @returns {string}
+ * @description:
+ *       discuss at: https://locutus.io/php/stripslashes/
+ *      original by: Kevin van Zonneveld (https://kvz.io)
+ *      improved by: Ates Goral (https://magnetiq.com)
+ *      improved by: marrtins
+ *      improved by: rezna
+ *         fixed by: Mick@el
+ *      bugfixed by: Onno Marsman (https://twitter.com/onnomarsman)
+ *      bugfixed by: Brett Zamir (https://brett-zamir.me)
+ *         input by: Rick Waldron
+ *         input by: Brant Messenger (https://www.brantmessenger.com/)
+ * reimplemented by: Brett Zamir (https://brett-zamir.me)
+ *        example 1: stripslashes('Kevin\'s code')
+ *        returns 1: "Kevin's code"
+ *        example 2: stripslashes('Kevin\\\'s code')
+ *        returns 2: "Kevin\'s code"
+ */
+export const stripSlashes = (str: string): string => {
+	return (str + '')
+		.replace(/\\(.?)/g, function(_s: string, n1: string){
+			switch(n1){
+				case '\\':
+					return '\\'
+				case '0':
+					return '\u0000'
+				case '':
+					return ''
+				default:
+					return n1
+			}
+		})
+}
+
+/**
+ * 中英文字符串截取（中文按照2个字符长度计算）
+ * @param str
+ * @param len
+ * @param eclipse_text
+ * @returns {*}
+ */
+export const cutString = (str: string, len: number, eclipse_text: string = '...'): string => {
+	let r = /[^\x00-\xff]/g;
+	if(str.replace(r, "mm").length <= len){
+		return str;
+	}
+	let m = Math.floor(len / 2);
+	for(let i = m; i < str.length; i++){
+		if(str.substr(0, i).replace(r, "mm").length >= len){
+			return str.substr(0, i) + eclipse_text;
+		}
+	}
+	return str;
+};
+
+/**
+ * 混合ES6模板字符串
+ * @example extract("hello ${user_name}", {user_name:"Jack"});
+ * @param {String} es_template 模板
+ * @param {Object} params 数据对象
+ * @return {String}
+ */
+export const extract = (es_template: string, params: Record<string, any>): string => {
+    const names = Object.keys(params);
+    const values = Object.values(params);
+    return new Function(...names, `return \`${es_template}\`;`)(...values);
+};
+
+/**
+ * 驼峰命名转换
+ * @param str - 输入字符串
+ * @returns 驼峰命名的字符串
+ * @example
+ * camelCase('hello-world') // 'helloWorld'
+ * camelCase('hello_world') // 'helloWorld'
+ */
+export function camelCase(str: string): string {
+    return str.replace(/[-_](.)/g, (_, char) => char.toUpperCase());
+}
+
+/**
+ * 短横线命名转换
+ * @param str - 输入字符串
+ * @returns 短横线命名的字符串
+ * @example
+ * kebabCase('helloWorld') // 'hello-world'
+ * kebabCase('HelloWorld') // 'hello-world'
+ */
+export function kebabCase(str: string): string {
+    return str
+        .replace(/([a-z])([A-Z])/g, "$1-$2")
+        .replace(/[\s_]+/g, "-")
+        .toLowerCase();
+}
+
+/**
+ * 截断字符串
+ * @param str - 输入字符串
+ * @param length - 最大长度
+ * @param suffix - 后缀，默认为 '...'
+ * @returns 截断后的字符串
+ * @example
+ * truncate('hello world', 5) // 'hello...'
+ */
+export function truncate(str: string, length: number, suffix: string = "..."): string {
+    if (str.length <= length) return str;
+    return str.slice(0, length) + suffix;
+}
+
+/**
+ * 正则表达式转义
+ * @param str
+ * @returns {string}
+ */
+export const regQuote = (str: string): string => {
+	return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
+};
+
+/**
+ * @param {String} srcStr
+ * @return {string}
+ */
+export const utf8Decode = (srcStr: string): string => {
+	let t = "";
+	let n = 0;
+	let r = 0,
+		c2 = 0,
+		c3 = 0;
+	while(n < srcStr.length){
+		r = srcStr.charCodeAt(n);
+		if(r < 128){
+			t += String.fromCharCode(r);
+			n++
+		}else if(r > 191 && r < 224){
+			c2 = srcStr.charCodeAt(n + 1);
+			t += String.fromCharCode((r & 31) << 6 | c2 & 63);
+			n += 2
+		}else{
+			c2 = srcStr.charCodeAt(n + 1);
+			c3 = srcStr.charCodeAt(n + 2);
+			t += String.fromCharCode((r & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
+			n += 3
+		}
+	}
+	return t
+};
+
+/**
+ * 判断字符串是否符合 JSON 标准
+ * @param {String} json
+ * @returns {boolean}
+ */
+export const isJSON = (json: string): boolean => {
+	let is_json = false;
+	try{
+		JSON.parse(json);
+		is_json = true;
+	}catch(error){
+	}
+	return is_json;
+}
+
+/**
+ * @param {String} srcStr
+ * @returns {string}
+ */
+export const utf8Encode = (srcStr: string): string => {
+	srcStr = srcStr.replace(/\r\n/g, "n");
+	let t = "";
+	for(let n = 0; n < srcStr.length; n++){
+		let r = srcStr.charCodeAt(n);
+		if(r < 128){
+			t += String.fromCharCode(r)
+		}else if(r > 127 && r < 2048){
+			t += String.fromCharCode(r >> 6 | 192);
+			t += String.fromCharCode(r & 63 | 128)
+		}else{
+			t += String.fromCharCode(r >> 12 | 224);
+			t += String.fromCharCode(r >> 6 & 63 | 128);
+			t += String.fromCharCode(r & 63 | 128)
+		}
+	}
+	return t;
+};
+
+/**
+ * 获取u8字符串长度(一个中文字按照3个字数计算)
+ * @param str
+ * @returns {number}
+ */
+export const getUTF8StrLen = (str: string): number => {
+	let realLength = 0;
+	let len = str.length;
+	let charCode = -1;
+	for(let i = 0; i < len; i++){
+		charCode = str.charCodeAt(i);
+		if(charCode >= 0 && charCode <= 128){
+			realLength += 1;
+		}else{
+			realLength += 3;
+		}
+	}
+	return realLength;
+};
+const DEFAULT_RANDOM_STRING = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890';
+
+/**
+ * 产生随机字符串
+ * @param {Number} length
+ * @param {String} sourceStr
+ * @returns {String}
+ */
+export const randomString = (length = 6, sourceStr = DEFAULT_RANDOM_STRING) => {
+	let codes = '';
+	for(let i = 0; i < length; i++){
+		let rnd = Math.round(Math.random() * (sourceStr.length - 1));
+		codes += sourceStr.substring(rnd, rnd + 1);
+	}
+	return codes;
+}
+
+/**
+ * 产生随机单词
+ * @param {Number} count 单词数量
+ * @param {Number} letterMax 每个单词最大字符数量
+ * @return {String[]} 单词列表
+ */
+export const randomWords = (count = 1, letterMax = 8) => {
+	let words = [];
+	const possible = 'bcdfghjklmnpqrstvwxyz';
+	const possibleVowels = 'aeiou';
+
+	while(count-- > 0){
+		let word = '';
+		for(let i = 0; i < letterMax; i = i + 3){
+			word += possible[Math.floor(Math.random() * possible.length)]
+			word += possibleVowels[Math.floor(Math.random() * possibleVowels.length)]
+			word += possible[Math.floor(Math.random() * possible.length)]
+		}
+		words.push(word);
+	}
+	return words;
+}
+/**
+ * 字符串转成首字母大写
+ * @param {String} str
+ * @param {Boolean} capitalize_first 是否将第一个单词首字母大写
+ * @return {string}
+ */
+export const strToPascalCase = (str: string, capitalize_first: boolean = false): string => {
+	let words: string[] = [];
+	str.replace(/[-_\s+]/g, ' ').split(' ').forEach((word, idx) => {
+		words.push((idx === 0 && !capitalize_first) ? word : capitalize(word));
+	});
+	return words.join('');
+}
+
+// trim 方向常量
+export const TRIM_BOTH = 0;
+export const TRIM_LEFT = 1;
+export const TRIM_RIGHT = 2;
+
+/**
+ * 去除字符串首尾指定字符或空白
+ * @param {String} str 源字符串
+ * @param {String} chars 指定字符，默认为空白
+ * @param {Number} dir 方向
+ * @returns {*|boolean}
+ */
+export const trim = (str: string, chars: string = '', dir: number = TRIM_BOTH): string => {
+	if(chars.length){
+		let regLeft = new RegExp('^[' + regQuote(chars) + ']+'),
+			regRight = new RegExp('[' + regQuote(chars) + ']+$');
+		return dir === TRIM_LEFT ? str.replace(regLeft, '') : (dir === TRIM_RIGHT ? str.replace(regRight, '') : str.replace(regLeft, '').replace(regRight, ''));
+	}else{
+		return dir === TRIM_BOTH ? str.trim() : (dir === TRIM_LEFT ? str.trimStart() : str.trimEnd());
+	}
+}

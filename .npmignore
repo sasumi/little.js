@@ -1,0 +1,32 @@
+# Source files
+src
+vite.config.ts
+tsconfig.json
+
+# Development files
+.vscode
+.idea
+*.log
+.DS_Store
+
+# Tests
+test
+tests
+*.test.ts
+*.spec.ts
+
+# Documentation (if you want to exclude it)
+docs
+
+# Git
+.git
+.gitignore
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Others
+node_modules
+*.tmp
+*.temp

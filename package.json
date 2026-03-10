@@ -1,0 +1,41 @@
+{
+  "name": "little.js",
+  "version": "1.0.0",
+  "description": "A collection of utility functions for time, string, object and more",
+  "type": "module",
+  "main": "./dist/little.umd.cjs",
+  "module": "./dist/little.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/little.js",
+      "require": "./dist/little.umd.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "utility",
+    "utils",
+    "time",
+    "string",
+    "object",
+    "helpers"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11",
+    "vite-plugin-dts": "^3.7.0"
+  }
+}
