@@ -261,3 +261,7 @@ export const formatDate = function (format: string, date: Date | number | string
         return esc === "" && PHP_DATE_CHAR_MAP[chr] ? String(PHP_DATE_CHAR_MAP[chr](dateObj)) : chr;
     });
 };
+
+export const getWeekNumber = (date: Date): number => {
+    return formatDate("W", date) as unknown as number;
+}

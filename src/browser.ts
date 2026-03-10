@@ -65,3 +65,7 @@ export const detectLanguage = (supportedLngs: string[]) => {
     }
     return supportedLngs[0];
 };
+
+export const isFirefox = () => {
+    return navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
+};

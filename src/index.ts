@@ -22,6 +22,7 @@ export {
   detectLanguage,
   enterFullScreen,
   exitFullScreen,
+  isFirefox,
   isInFullScreen,
   toggleFullScreen
 } from './browser'
@@ -55,6 +56,7 @@ export {
   mutationEffective,
   nodeIndex,
   onDomTreeChange,
+  onHover,
   precisionToStep,
   rectAssoc,
   rectInLayout,
@@ -103,10 +105,12 @@ export {
   between,
   detectedPrecision,
   digitCount,
+  limit,
   mmToPt,
   mmToPx,
   mmToTwip,
   ptToMm,
+  pxToMm,
   randomInt,
   round
 } from './math'
@@ -121,6 +125,20 @@ export {
   MIME_BINARY_DEFAULT,
   MIME_EXTENSION_MAP
 } from './mime'
+
+// Net utilities
+export type {
+  AbortablePromise
+} from './net'
+export {
+  getJson,
+  objToQuery,
+  postFiles,
+  postJson,
+  queryReplace,
+  queryToObj,
+  request
+} from './net'
 
 // Object utilities
 export {
@@ -143,11 +161,11 @@ export {
   cutString,
   extract,
   getUTF8StrLen,
-  isJSON,
   kebabCase,
   randomString,
   randomWords,
   regQuote,
+  strChunk,
   strToPascalCase,
   stripSlashes,
   trim,
@@ -182,6 +200,7 @@ export {
   YEAR_NOW,
   countDown,
   formatDate,
+  getWeekNumber,
   msToHMS
 } from './time'
 
@@ -190,6 +209,7 @@ export {
   debounce,
   guid,
   isFunction,
+  isJSON,
   isJson,
   isObject,
   isPromise,

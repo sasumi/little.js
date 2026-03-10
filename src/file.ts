@@ -91,6 +91,7 @@ export const fileToBase64DataUri = async (file: File | Blob | string) => {
  */
 export const downloadFile = (uri: string, fileName: string) => {
     const link = document.createElement("a");
+	link.rel = 'noopener noreferrer';
     link.href = uri;
     link.download = fileName;
     document.body.appendChild(link);

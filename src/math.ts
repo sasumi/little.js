@@ -37,6 +37,20 @@ export const mmToPt = (mm: number): number => mm * 2.83464566929;
 export const ptToMm = (pt: number): number => pt / 2.83464566929;
 
 /**
+ * 像素转毫米
+ * @param {Number} px
+ * @param {Number} dpi
+ * @returns
+ */
+export const pxToMm = (px: number, dpi: number = STAND_DPI): number => {
+    return (25.4 * px) / dpi;
+};
+
+export const limit = (num: number, min: number, max: number): number => {
+    return Math.min(Math.max(num, min), max);
+}
+
+/**
  * 检测指定值是否在指定区间内
  * @param {Number} val
  * @param {Number} min

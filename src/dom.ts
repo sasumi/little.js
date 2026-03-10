@@ -62,6 +62,23 @@ export const toggleDisabled = (el: HTMLElement | string, disabledClass: string =
     }
 };
 
+export const onHover = (el: HTMLElement | string, onHoverIn: () => void, onHoverOut: () => void): void => {
+    el = findOne(el) as HTMLElement;
+    let isHovering = false;
+    el.addEventListener("mouseenter", () => {
+        if (!isHovering) {
+            isHovering = true;
+            onHoverIn && onHoverIn();
+        }
+    });
+    el.addEventListener("mouseleave", () => {
+        if (isHovering) {
+            isHovering = false;
+            onHoverOut && onHoverOut();
+        }
+    });
+};
+
 /**
  * 绑定元素，禁止交互
  * @param {Node} el

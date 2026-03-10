@@ -32,20 +32,19 @@ export function capitalize(str: string): string {
  *        returns 2: "Kevin\'s code"
  */
 export const stripSlashes = (str: string): string => {
-	return (str + '')
-		.replace(/\\(.?)/g, function(_s: string, n1: string){
-			switch(n1){
-				case '\\':
-					return '\\'
-				case '0':
-					return '\u0000'
-				case '':
-					return ''
-				default:
-					return n1
-			}
-		})
-}
+    return (str + "").replace(/\\(.?)/g, function (_s: string, n1: string) {
+        switch (n1) {
+            case "\\":
+                return "\\";
+            case "0":
+                return "\u0000";
+            case "":
+                return "";
+            default:
+                return n1;
+        }
+    });
+};
 
 /**
  * 中英文字符串截取（中文按照2个字符长度计算）
@@ -54,18 +53,18 @@ export const stripSlashes = (str: string): string => {
  * @param eclipse_text
  * @returns {*}
  */
-export const cutString = (str: string, len: number, eclipse_text: string = '...'): string => {
-	let r = /[^\x00-\xff]/g;
-	if(str.replace(r, "mm").length <= len){
-		return str;
-	}
-	let m = Math.floor(len / 2);
-	for(let i = m; i < str.length; i++){
-		if(str.substr(0, i).replace(r, "mm").length >= len){
-			return str.substr(0, i) + eclipse_text;
-		}
-	}
-	return str;
+export const cutString = (str: string, len: number, eclipse_text: string = "..."): string => {
+    let r = /[^\x00-\xff]/g;
+    if (str.replace(r, "mm").length <= len) {
+        return str;
+    }
+    let m = Math.floor(len / 2);
+    for (let i = m; i < str.length; i++) {
+        if (str.substr(0, i).replace(r, "mm").length >= len) {
+            return str.substr(0, i) + eclipse_text;
+        }
+    }
+    return str;
 };
 
 /**
@@ -128,7 +127,7 @@ export function truncate(str: string, length: number, suffix: string = "..."): s
  * @returns {string}
  */
 export const regQuote = (str: string): string => {
-	return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
+    return (str + "").replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
 };
 
 /**
@@ -136,66 +135,51 @@ export const regQuote = (str: string): string => {
  * @return {string}
  */
 export const utf8Decode = (srcStr: string): string => {
-	let t = "";
-	let n = 0;
-	let r = 0,
-		c2 = 0,
-		c3 = 0;
-	while(n < srcStr.length){
-		r = srcStr.charCodeAt(n);
-		if(r < 128){
-			t += String.fromCharCode(r);
-			n++
-		}else if(r > 191 && r < 224){
-			c2 = srcStr.charCodeAt(n + 1);
-			t += String.fromCharCode((r & 31) << 6 | c2 & 63);
-			n += 2
-		}else{
-			c2 = srcStr.charCodeAt(n + 1);
-			c3 = srcStr.charCodeAt(n + 2);
-			t += String.fromCharCode((r & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
-			n += 3
-		}
-	}
-	return t
+    let t = "";
+    let n = 0;
+    let r = 0,
+        c2 = 0,
+        c3 = 0;
+    while (n < srcStr.length) {
+        r = srcStr.charCodeAt(n);
+        if (r < 128) {
+            t += String.fromCharCode(r);
+            n++;
+        } else if (r > 191 && r < 224) {
+            c2 = srcStr.charCodeAt(n + 1);
+            t += String.fromCharCode(((r & 31) << 6) | (c2 & 63));
+            n += 2;
+        } else {
+            c2 = srcStr.charCodeAt(n + 1);
+            c3 = srcStr.charCodeAt(n + 2);
+            t += String.fromCharCode(((r & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+            n += 3;
+        }
+    }
+    return t;
 };
-
-/**
- * 判断字符串是否符合 JSON 标准
- * @param {String} json
- * @returns {boolean}
- */
-export const isJSON = (json: string): boolean => {
-	let is_json = false;
-	try{
-		JSON.parse(json);
-		is_json = true;
-	}catch(error){
-	}
-	return is_json;
-}
 
 /**
  * @param {String} srcStr
  * @returns {string}
  */
 export const utf8Encode = (srcStr: string): string => {
-	srcStr = srcStr.replace(/\r\n/g, "n");
-	let t = "";
-	for(let n = 0; n < srcStr.length; n++){
-		let r = srcStr.charCodeAt(n);
-		if(r < 128){
-			t += String.fromCharCode(r)
-		}else if(r > 127 && r < 2048){
-			t += String.fromCharCode(r >> 6 | 192);
-			t += String.fromCharCode(r & 63 | 128)
-		}else{
-			t += String.fromCharCode(r >> 12 | 224);
-			t += String.fromCharCode(r >> 6 & 63 | 128);
-			t += String.fromCharCode(r & 63 | 128)
-		}
-	}
-	return t;
+    srcStr = srcStr.replace(/\r\n/g, "n");
+    let t = "";
+    for (let n = 0; n < srcStr.length; n++) {
+        let r = srcStr.charCodeAt(n);
+        if (r < 128) {
+            t += String.fromCharCode(r);
+        } else if (r > 127 && r < 2048) {
+            t += String.fromCharCode((r >> 6) | 192);
+            t += String.fromCharCode((r & 63) | 128);
+        } else {
+            t += String.fromCharCode((r >> 12) | 224);
+            t += String.fromCharCode(((r >> 6) & 63) | 128);
+            t += String.fromCharCode((r & 63) | 128);
+        }
+    }
+    return t;
 };
 
 /**
@@ -204,20 +188,20 @@ export const utf8Encode = (srcStr: string): string => {
  * @returns {number}
  */
 export const getUTF8StrLen = (str: string): number => {
-	let realLength = 0;
-	let len = str.length;
-	let charCode = -1;
-	for(let i = 0; i < len; i++){
-		charCode = str.charCodeAt(i);
-		if(charCode >= 0 && charCode <= 128){
-			realLength += 1;
-		}else{
-			realLength += 3;
-		}
-	}
-	return realLength;
+    let realLength = 0;
+    let len = str.length;
+    let charCode = -1;
+    for (let i = 0; i < len; i++) {
+        charCode = str.charCodeAt(i);
+        if (charCode >= 0 && charCode <= 128) {
+            realLength += 1;
+        } else {
+            realLength += 3;
+        }
+    }
+    return realLength;
 };
-const DEFAULT_RANDOM_STRING = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890';
+const DEFAULT_RANDOM_STRING = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
 
 /**
  * 产生随机字符串
@@ -226,13 +210,13 @@ const DEFAULT_RANDOM_STRING = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
  * @returns {String}
  */
 export const randomString = (length = 6, sourceStr = DEFAULT_RANDOM_STRING) => {
-	let codes = '';
-	for(let i = 0; i < length; i++){
-		let rnd = Math.round(Math.random() * (sourceStr.length - 1));
-		codes += sourceStr.substring(rnd, rnd + 1);
-	}
-	return codes;
-}
+    let codes = "";
+    for (let i = 0; i < length; i++) {
+        let rnd = Math.round(Math.random() * (sourceStr.length - 1));
+        codes += sourceStr.substring(rnd, rnd + 1);
+    }
+    return codes;
+};
 
 /**
  * 产生随机单词
@@ -241,21 +225,21 @@ export const randomString = (length = 6, sourceStr = DEFAULT_RANDOM_STRING) => {
  * @return {String[]} 单词列表
  */
 export const randomWords = (count = 1, letterMax = 8) => {
-	let words = [];
-	const possible = 'bcdfghjklmnpqrstvwxyz';
-	const possibleVowels = 'aeiou';
+    let words = [];
+    const possible = "bcdfghjklmnpqrstvwxyz";
+    const possibleVowels = "aeiou";
 
-	while(count-- > 0){
-		let word = '';
-		for(let i = 0; i < letterMax; i = i + 3){
-			word += possible[Math.floor(Math.random() * possible.length)]
-			word += possibleVowels[Math.floor(Math.random() * possibleVowels.length)]
-			word += possible[Math.floor(Math.random() * possible.length)]
-		}
-		words.push(word);
-	}
-	return words;
-}
+    while (count-- > 0) {
+        let word = "";
+        for (let i = 0; i < letterMax; i = i + 3) {
+            word += possible[Math.floor(Math.random() * possible.length)];
+            word += possibleVowels[Math.floor(Math.random() * possibleVowels.length)];
+            word += possible[Math.floor(Math.random() * possible.length)];
+        }
+        words.push(word);
+    }
+    return words;
+};
 /**
  * 字符串转成首字母大写
  * @param {String} str
@@ -263,12 +247,14 @@ export const randomWords = (count = 1, letterMax = 8) => {
  * @return {string}
  */
 export const strToPascalCase = (str: string, capitalize_first: boolean = false): string => {
-	let words: string[] = [];
-	str.replace(/[-_\s+]/g, ' ').split(' ').forEach((word, idx) => {
-		words.push((idx === 0 && !capitalize_first) ? word : capitalize(word));
-	});
-	return words.join('');
-}
+    let words: string[] = [];
+    str.replace(/[-_\s+]/g, " ")
+        .split(" ")
+        .forEach((word, idx) => {
+            words.push(idx === 0 && !capitalize_first ? word : capitalize(word));
+        });
+    return words.join("");
+};
 
 // trim 方向常量
 export const TRIM_BOTH = 0;
@@ -282,12 +268,26 @@ export const TRIM_RIGHT = 2;
  * @param {Number} dir 方向
  * @returns {*|boolean}
  */
-export const trim = (str: string, chars: string = '', dir: number = TRIM_BOTH): string => {
-	if(chars.length){
-		let regLeft = new RegExp('^[' + regQuote(chars) + ']+'),
-			regRight = new RegExp('[' + regQuote(chars) + ']+$');
-		return dir === TRIM_LEFT ? str.replace(regLeft, '') : (dir === TRIM_RIGHT ? str.replace(regRight, '') : str.replace(regLeft, '').replace(regRight, ''));
-	}else{
-		return dir === TRIM_BOTH ? str.trim() : (dir === TRIM_LEFT ? str.trimStart() : str.trimEnd());
-	}
-}
+export const trim = (str: string, chars: string = "", dir: number = TRIM_BOTH): string => {
+    if (chars.length) {
+        let regLeft = new RegExp("^[" + regQuote(chars) + "]+"),
+            regRight = new RegExp("[" + regQuote(chars) + "]+$");
+        return dir === TRIM_LEFT ? str.replace(regLeft, "") : dir === TRIM_RIGHT ? str.replace(regRight, "") : str.replace(regLeft, "").replace(regRight, "");
+    } else {
+        return dir === TRIM_BOTH ? str.trim() : dir === TRIM_LEFT ? str.trimStart() : str.trimEnd();
+    }
+};
+
+/**
+ * 将字符串分割成指定长度的数组
+ * @param str 
+ * @param size 
+ * @returns {string[]}
+ */
+export const strChunk = (str: string, size: number): string[] => {
+    let ret: string[] = [];
+    for (let i = 0; i < str.length; i += size) {
+        ret.push(str.slice(i, i + size));
+    }
+    return ret;
+};

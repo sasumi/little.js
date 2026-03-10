@@ -23,7 +23,11 @@
     "prebuild": "npm run generate:index",
     "preview": "vite preview",
     "prepublishOnly": "npm run build",
-    "generate:index": "node scripts/generate-index.js"
+    "generate:index": "node scripts/generate-index.js",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [
     "utility",
@@ -44,8 +48,12 @@
   },
   "homepage": "https://github.com/your-username/minutool#readme",
   "devDependencies": {
+    "@vitest/coverage-v8": "^1.2.0",
+    "@vitest/ui": "^1.2.0",
+    "jsdom": "^24.0.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.11",
-    "vite-plugin-dts": "^3.7.0"
+    "vite-plugin-dts": "^3.7.0",
+    "vitest": "^1.2.0"
   }
 }

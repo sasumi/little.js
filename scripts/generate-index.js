@@ -18,14 +18,21 @@ function getCategoryComment(moduleName) {
 // 解析文件中的所有 export
 function parseExports(filePath) {
   const content = fs.readFileSync(filePath, 'utf-8');
-  const exports = [];
+  const valueExports = [];
+  const typeExports = [];
   
-  // 匹配所有 export 语句
-  const exportRegex = /^export\s+(?:const|function|class|interface|type|enum)\s+(\w+)/gm;
+  // 匹配类型导出 (interface, type, enum)
+  const typeExportRegex = /^export\s+(?:interface|type|enum)\s+(\w+)/gm;
   let match;
   
-  while ((match = exportRegex.exec(content)) !== null) {
-    exports.push(match[1]);
+  while ((match = typeExportRegex.exec(content)) !== null) {
+    typeExports.push(match[1]);
+  }
+  
+  // 匹配值导出 (const, function, class)
+  const valueExportRegex = /^export\s+(?:const|function|class)\s+(\w+)/gm;
+  while ((match = valueExportRegex.exec(content)) !== null) {
+    valueExports.push(match[1]);
   }
   
   // 匹配 export { ... }
@@ -40,10 +47,18 @@ function parseExports(filePath) {
       }
       return trimmed;
     }).filter(Boolean);
-    exports.push(...names);
+    // 默认添加到值导出，除非在类型导出中已存在
+    names.forEach(name => {
+      if (!typeExports.includes(name)) {
+        valueExports.push(name);
+      }
+    });
   }
   
-  return [...new Set(exports)]; // 去重
+  return {
+    types: [...new Set(typeExports)],
+    values: [...new Set(valueExports)]
+  };
 }
 
 // 生成 index.ts 内容
@@ -57,32 +72,49 @@ function generateIndexContent() {
   files.forEach(file => {
     const moduleName = file.replace('.ts', '');
     const filePath = path.join(srcDir, file);
-    const exports = parseExports(filePath);
+    const { types, values } = parseExports(filePath);
     
-    if (exports.length === 0) return;
+    if (types.length === 0 && values.length === 0) return;
     
     const categoryComment = getCategoryComment(moduleName);
     
     content += `// ${categoryComment}\n`;
-    content += `export {\n`;
     
-    // 按字母排序并格式化
-    exports.sort().forEach((exp, index) => {
-      // 特殊处理：MD5 模块的导出别名
-      if (moduleName === 'md5' && exp === 'MD5') {
-        content += `  md5 as MD5`;
-      } else {
+    // 导出类型
+    if (types.length > 0) {
+      content += `export type {\n`;
+      types.sort().forEach((exp, index) => {
         content += `  ${exp}`;
-      }
-      
-      if (index < exports.length - 1) {
-        content += ',\n';
-      } else {
-        content += '\n';
-      }
-    });
+        if (index < types.length - 1) {
+          content += ',\n';
+        } else {
+          content += '\n';
+        }
+      });
+      content += `} from './${moduleName}'\n`;
+    }
     
-    content += `} from './${moduleName}'\n\n`;
+    // 导出值
+    if (values.length > 0) {
+      content += `export {\n`;
+      values.sort().forEach((exp, index) => {
+        // 特殊处理：MD5 模块的导出别名
+        if (moduleName === 'md5' && exp === 'MD5') {
+          content += `  md5 as MD5`;
+        } else {
+          content += `  ${exp}`;
+        }
+        
+        if (index < values.length - 1) {
+          content += ',\n';
+        } else {
+          content += '\n';
+        }
+      });
+      content += `} from './${moduleName}'\n`;
+    }
+    
+    content += '\n';
   });
   
   return content.trim() + '\n';

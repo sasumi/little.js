@@ -117,10 +117,24 @@ export const isUrl = (str: string) => {
 };
 
 /**
+ * 判断字符串是否符合 JSON 标准
+ * @param {String} json
+ * @returns {boolean}
+ */
+export const isJSON = (json: string): boolean => {
+	let is_json = false;
+	try{
+		JSON.parse(json);
+		is_json = true;
+	}catch(error){
+	}
+	return is_json;
+}
+
+/**
  * 打印调用堆栈
  */
 export const printStack = () => {
     let stack = new Error().stack;
-    // stack = stack.replace(/^Error/, "CallStack:").replace(/^([^\r\n]*)(\r?\n)[^\r\n]*(\r?\n)?/, "$1$2");
     console.log(stack);
 };
