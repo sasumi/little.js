@@ -16,6 +16,27 @@ export const mmToPx = (dimension: number, dpi: number = STAND_DPI): number => {
 };
 
 /**
+ * 将 mm 转换为 TWIP
+ * @param {*} mm
+ * @returns
+ */
+export const mmToTwip = (mm: number): number => Math.round(mm * 56.6929);
+
+/**
+ * 将 mm 转换为 磅
+ * @param {Number} mm
+ * @returns {Number}
+ */
+export const mmToPt = (mm: number): number => mm * 2.83464566929;
+
+/**
+ * 将 pt 转换为 mm
+ * @param {Number} pt
+ * @returns {Number}
+ */
+export const ptToMm = (pt: number): number => pt / 2.83464566929;
+
+/**
  * 检测指定值是否在指定区间内
  * @param {Number} val
  * @param {Number} min

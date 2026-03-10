@@ -103,7 +103,10 @@ export {
   between,
   detectedPrecision,
   digitCount,
+  mmToPt,
   mmToPx,
+  mmToTwip,
+  ptToMm,
   randomInt,
   round
 } from './math'

@@ -1,15 +1,15 @@
 {
-  "name": "minut",
+  "name": "minutool",
   "version": "1.0.0",
   "description": "A collection of utility functions for time, string, object and more",
   "type": "module",
-  "main": "./dist/minut.umd.cjs",
-  "module": "./dist/minut.js",
+  "main": "./dist/minutool.umd.cjs",
+  "module": "./dist/minutool.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/minut.js",
-      "require": "./dist/minut.umd.cjs",
+      "import": "./dist/minutool.js",
+      "require": "./dist/minutool.umd.cjs",
       "types": "./dist/index.d.ts"
     }
   },
@@ -37,12 +37,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/minut.git"
+    "url": "https://github.com/your-username/minutool.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/minut/issues"
+    "url": "https://github.com/your-username/minutool/issues"
   },
-  "homepage": "https://github.com/your-username/minut#readme",
+  "homepage": "https://github.com/your-username/minutool#readme",
   "devDependencies": {
     "typescript": "^5.3.3",
     "vite": "^5.0.11",

@@ -13,12 +13,12 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'Minut',
+      name: 'Minutool',
       formats: ['es', 'umd'],
       fileName: (format) => {
-        if (format === 'es') return 'minut.js'
-        if (format === 'umd') return 'minut.umd.cjs'
-        return `minut.${format}.js`
+        if (format === 'es') return 'minutool.js'
+        if (format === 'umd') return 'minutool.umd.cjs'
+        return `minutool.${format}.js`
       }
     },
     rollupOptions: {
