@@ -1,15 +1,15 @@
 {
-  "name": "little.js",
+  "name": "minut",
   "version": "1.0.0",
   "description": "A collection of utility functions for time, string, object and more",
   "type": "module",
-  "main": "./dist/little.umd.cjs",
-  "module": "./dist/little.js",
+  "main": "./dist/minut.umd.cjs",
+  "module": "./dist/minut.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/little.js",
-      "require": "./dist/little.umd.cjs",
+      "import": "./dist/minut.js",
+      "require": "./dist/minut.umd.cjs",
       "types": "./dist/index.d.ts"
     }
   },
@@ -33,8 +33,16 @@
     "object",
     "helpers"
   ],
-  "author": "",
+  "author": "Your Name <your-email@example.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/minut.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/minut/issues"
+  },
+  "homepage": "https://github.com/your-username/minut#readme",
   "devDependencies": {
     "typescript": "^5.3.3",
     "vite": "^5.0.11",

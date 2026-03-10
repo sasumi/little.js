@@ -25,6 +25,24 @@ export const blobToDataUri = (blob: Blob): Promise<string> =>
         reader.readAsDataURL(blob);
     });
 
+// 缓存通过 URL 获取的文件数据
+const FILE_B64_CACHE_DATA: Record<string, string> = {};
+
+/**
+ * url 转 Base64Data 数据缓存
+ * @param {String} url
+ * @param {String|Null} b64Data base64 数据，传入 null 则为读取缓存，这里不是不是base64，而是 base64 data URL
+ * @returns {String|Null} 读取缓存时返回 base64 data URL 字符串，未命中返回 null
+ */
+export const urlB64DataCache = (url: string, b64Data: string | null = null): string | null => {
+    if (b64Data !== null) {
+        FILE_B64_CACHE_DATA[url] = b64Data;
+        return null;
+    } else {
+        return FILE_B64_CACHE_DATA[url] || null;
+    }
+};
+
 /**
  * 将文件转换为 Base64 data URL
  * 支持 File/Blob 对象，或字符串 URL（http(s)/相对/blob:）

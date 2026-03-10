@@ -13,12 +13,12 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'Little',
+      name: 'Minut',
       formats: ['es', 'umd'],
       fileName: (format) => {
-        if (format === 'es') return 'little.js'
-        if (format === 'umd') return 'little.umd.cjs'
-        return `little.${format}.js`
+        if (format === 'es') return 'minut.js'
+        if (format === 'umd') return 'minut.umd.cjs'
+        return `minut.${format}.js`
       }
     },
     rollupOptions: {

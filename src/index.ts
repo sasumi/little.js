@@ -68,7 +68,8 @@ export {
   blobToDataUri,
   downloadFile,
   fileToBase64DataUri,
-  sanitizeFileName
+  sanitizeFileName,
+  urlB64DataCache
 } from './file'
 
 // Html utilities

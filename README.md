@@ -1,23 +1,23 @@
-# little.js
+# minut
 
 A lightweight collection of utility functions for JavaScript/TypeScript projects.
 
 ## Installation
 
 ```bash
-npm install little.js
+npm install minut
 ```
 
 or
 
 ```bash
-yarn add little.js
+yarn add minut
 ```
 
 ## Usage
 
 ```typescript
-import { formatDate, capitalize, deepClone } from 'little.js'
+import { formatDate, capitalize, deepClone } from 'minut'
 
 // Time utilities
 const now = new Date()

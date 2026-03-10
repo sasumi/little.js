@@ -1,4 +1,5 @@
 import { blobToBase64 } from "./base64";
+import { urlB64DataCache } from "./file";
 
 /**
  * 通过 Image 获取base64数据
@@ -26,8 +27,14 @@ export const imgToBase64 = (img: HTMLImageElement): string | null => {
  * @param src
  * @returns {Promise<unknown>}
  */
-export const srcToBase64 = (src: string): Promise<unknown> => {
+export const srcToBase64 = (src: string, cache: boolean = false): Promise<unknown> => {
     return new Promise((resolve, reject) => {
+        if (cache) {
+            const cached = urlB64DataCache(src);
+            if (cached) {
+                return resolve(cached);
+            }
+        }
         let xhr = new XMLHttpRequest();
         xhr.open("GET", src, true);
         xhr.responseType = "blob";
@@ -36,6 +43,9 @@ export const srcToBase64 = (src: string): Promise<unknown> => {
                 let blob = this.response;
                 blobToBase64(blob)
                     .then((base64) => {
+                        if (cache) {
+                            urlB64DataCache(src, base64 as string);
+                        }
                         resolve(base64);
                     })
                     .catch((error) => {
