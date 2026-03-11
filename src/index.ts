@@ -123,7 +123,12 @@ export {
 // Mime utilities
 export {
   MIME_BINARY_DEFAULT,
-  MIME_EXTENSION_MAP
+  MIME_EXTENSION_MAP,
+  MIME_FORM,
+  MIME_HTML,
+  MIME_JSON,
+  MIME_MULTIPART,
+  MIME_TEXT
 } from './mime'
 
 // Net utilities
@@ -131,8 +136,9 @@ export type {
   AbortablePromise
 } from './net'
 export {
-  MIME_JSON,
+  abortableFetch,
   getJson,
+  isBodyInit,
   objToQuery,
   postFiles,
   postJson,

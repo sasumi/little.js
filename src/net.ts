@@ -1,4 +1,4 @@
-export const MIME_JSON = "application/json";
+import { MIME_FORM, MIME_JSON, MIME_MULTIPART } from "./mime";
 
 /**
  * 将 URL 查询字符串转换为对象
@@ -84,7 +84,7 @@ export interface AbortablePromise<T> extends Promise<T> {
  * const req = abortableFetch('/api/data');
  * req.abort(); // 中止请求
  */
-const abortableFetch = (url: string, options: any = {}): AbortablePromise<any> => {
+export const abortableFetch = (url: string, options: any = {}): AbortablePromise<any> => {
     const controller = new AbortController();
     const { timeout, ...fetchOptions } = options;
 
@@ -92,29 +92,58 @@ const abortableFetch = (url: string, options: any = {}): AbortablePromise<any> =
     if (timeout) {
         timeoutId = setTimeout(() => controller.abort(), timeout);
     }
-    const wrap = (promise: Promise<any>) => {
-        const p = promise
-            .then((res) => {
-                if (timeoutId !== null) clearTimeout(timeoutId);
-                return res;
-            })
-            .catch((err) => {
-                if (timeoutId !== null) clearTimeout(timeoutId);
-                throw err;
-            }) as AbortablePromise<any>;
 
-        const oldThen = p.then.bind(p);
-        p.then = (...args) => wrap(oldThen(...args));
-        p.abort = () => controller.abort();
-        return p;
+    const clearTimer = () => {
+        if (timeoutId !== null) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+        }
     };
 
-    return wrap(
-        fetch(url, {
-            ...fetchOptions,
-            signal: controller.signal,
-        }),
-    );
+    const addAbortMethod = (promise: Promise<any>): AbortablePromise<any> => {
+        const abortablePromise = promise as AbortablePromise<any>;
+
+        // 保存原始方法
+        const originalThen = abortablePromise.then.bind(abortablePromise);
+        const originalCatch = abortablePromise.catch.bind(abortablePromise);
+        const originalFinally = abortablePromise.finally.bind(abortablePromise);
+
+        // 重写方法，确保返回的 Promise 也具有 abort 方法
+        abortablePromise.then = function (onfulfilled, onrejected) {
+            return addAbortMethod(originalThen(onfulfilled, onrejected));
+        };
+
+        abortablePromise.catch = function (onrejected) {
+            return addAbortMethod(originalCatch(onrejected));
+        };
+
+        abortablePromise.finally = function (onfinally) {
+            return addAbortMethod(originalFinally(onfinally));
+        };
+
+        // 添加 abort 方法
+        abortablePromise.abort = () => {
+            clearTimer();
+            controller.abort();
+        };
+
+        return abortablePromise;
+    };
+
+    const fetchPromise = fetch(url, {
+        ...fetchOptions,
+        signal: controller.signal,
+    })
+        .then((res) => {
+            clearTimer();
+            return res;
+        })
+        .catch((err) => {
+            clearTimer();
+            throw err;
+        });
+
+    return addAbortMethod(fetchPromise);
 };
 
 interface RequestOption {
@@ -128,7 +157,7 @@ interface RequestOption {
 /**
  * 发送 HTTP 请求
  * @param {string} url - 请求 URL
- * @param {BodyInit|null} [data=null] - 请求数据
+ * @param {BodyInit|null} [data=null] - 请求数据,可以是字符串、FormData、URLSearchParams、Blob、ArrayBuffer 等，如果是对象会根据 ContentType 自动转换（例如 application/json 会自动 JSON.stringify）
  * @param {RequestOption} option - 请求选项
  * @returns {AbortablePromise<Response>} 返回可中止的 Promise
  * @example
@@ -145,7 +174,7 @@ export const request = (url: string, data: BodyInit | null = null, option: Reque
     return abortableFetch(url, {
         method,
         headers,
-        body: data,
+        body: fixData(data, ContentType),
         timeout,
     }).then((response) => {
         if (!response.ok) {
@@ -153,6 +182,39 @@ export const request = (url: string, data: BodyInit | null = null, option: Reque
         }
         return response;
     }) as AbortablePromise<Response>;
+};
+
+/**
+ * 检测值是否为 BodyInit 可接受的类型
+ * @param {any} value - 要检测的值
+ * @returns {boolean} 如果是 BodyInit 可接受的类型返回 true，否则返回 false
+ */
+export const isBodyInit = (value: any): value is BodyInit => {
+    return (
+        typeof value === "string" ||
+        value instanceof FormData ||
+        value instanceof URLSearchParams ||
+        value instanceof Blob ||
+        value instanceof ArrayBuffer ||
+        ArrayBuffer.isView(value)
+    );
+};
+
+const fixData = (data: any, contentType?: string) => {
+    if (isBodyInit(data)) {
+        return data;
+    }
+    if (typeof data !== "object") {
+        return data;
+    }
+    switch (contentType?.toLowerCase()) {
+        case MIME_JSON:
+            return JSON.stringify(data);
+        case MIME_FORM:
+        case MIME_MULTIPART:
+        default:
+            return objToQuery(data);
+    }
 };
 
 /**

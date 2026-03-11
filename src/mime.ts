@@ -5,6 +5,13 @@
  */
 export const MIME_BINARY_DEFAULT = 'application/octet-stream';
 
+export const MIME_JSON = "application/json";
+export const MIME_FORM = "application/x-www-form-urlencoded";
+export const MIME_MULTIPART = "multipart/form-data";
+export const MIME_TEXT = "text/plain";
+export const MIME_HTML = "text/html";
+
+
 /**
  * MIME常见扩展名映射表
  * @type {Object}
