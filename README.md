@@ -1,23 +1,23 @@
-# minut
+# minutool
 
 A lightweight collection of utility functions for JavaScript/TypeScript projects.
 
 ## Installation
 
 ```bash
-npm install minut
+npm install minutool
 ```
 
 or
 
 ```bash
-yarn add minut
+yarn add minutool
 ```
 
 ## Usage
 
 ```typescript
-import { formatDate, capitalize, deepClone } from 'minut'
+import { formatDate, capitalize, deepClone } from 'minutool'
 
 // Time utilities
 const now = new Date()
@@ -39,7 +39,7 @@ const cloned = deepClone(obj)
 - `YEAR_NOW` - Current year
 - `MONTH_NOW` - Current month (1-12)
 - `DATE_NOW` - Current day of month
-- `ONE_MINUTE` - Milliseconds in one minute
+- `ONE_MINUTE` - Milliseconds in one minutoole
 - `ONE_HOUR` - Milliseconds in one hour
 - `ONE_DAY` - Milliseconds in one day
 - `ONE_WEEK` - Milliseconds in one week
@@ -62,7 +62,7 @@ const cloned = deepClone(obj)
 **Functions:**
 - `formatDate(format: string, date?: Date | number | string | null): string` - Format date
 - `countDown(timeout: number, tickFunc?: Function, onFinish?: Function)` - Countdown timer
-- `msToHMS(ms: number)` - Convert milliseconds to hours/minutes/seconds
+- `msToHMS(ms: number)` - Convert milliseconds to hours/minutooles/seconds
 
 ### String Utilities
 
