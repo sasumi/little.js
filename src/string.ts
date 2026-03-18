@@ -11,6 +11,19 @@ export function capitalize(str: string): string {
 }
 
 /**
+ * 将字符串转换为浮点数
+ * @param {string} str - 要转换的字符串
+ * @param {number} [defaultVal=0] - 转换失败时的默认值
+ */
+export const floatVal = (str: string, defaultVal: number = 0): number => {
+    if (!str || typeof str !== "string") {
+        return defaultVal;
+    }
+    const val = parseFloat(str);
+    return isNaN(val) ? defaultVal : val;
+};
+
+/**
  * 反转义字符串
  * @param str
  * @returns {string}
@@ -308,4 +321,13 @@ export const strChunk = (str: string, size: number): string[] => {
         ret.push(str.slice(i, i + size));
     }
     return ret;
+};
+
+/**
+ * 判断字符串是否包含中文字符
+ * @param {string} str - 要判断的字符串
+ * @returns {boolean} 返回是否包含中文字符
+ */
+export const isChinese = (str: string): boolean => {
+    return /[\u4e00-\u9fa5]/.test(str);
 };
