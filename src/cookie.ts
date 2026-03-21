@@ -5,18 +5,24 @@
  * @param {string} value - Cookie 值
  * @param {number} days - 有效天数，0 表示会话 Cookie
  * @param {string} [path='/'] - Cookie 路径，默认为根路径
+ * @param {string} [domain] - Cookie 域名
  * @returns {void}
  * @example
  * setCookie('username', 'john', 7)
+ * setCookie('username', 'john', 7, '/', '.example.com')
  */
-export const setCookie = (name: string, value: string, days: number, path: string = '/'): void => {
+export const setCookie = (name: string, value: string, days: number, path: string = '/', domain?: string): void => {
 	let expires = "";
 	if(days){
 		let date = new Date();
 		date.setTime(Date.now() + (days * 24 * 60 * 60 * 1000));
 		expires = "; expires=" + date.toUTCString();
 	}
-	document.cookie = name + "=" + (value || "") + expires + "; path=" + path;
+	let cookieString = name + "=" + (value || "") + expires + "; path=" + path;
+	if (domain) {
+		cookieString += "; domain=" + domain;
+	}
+	document.cookie = cookieString;
 }
 
 /**
@@ -40,10 +46,17 @@ export const getCookie = (name: string): string | null => {
 /**
  * 删除 Cookie
  * @param {string} name - Cookie 名称
+ * @param {string} [path='/'] - Cookie 路径，必须与设置时的路径一致
+ * @param {string} [domain] - Cookie 域名，必须与设置时的域名一致
  * @returns {void}
  * @example
  * deleteCookie('username')
+ * deleteCookie('username', '/', '.example.com')
  */
-export const deleteCookie = (name: string): void => {
-	document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+export const deleteCookie = (name: string, path: string = '/', domain?: string): void => {
+	let cookieString = name + '=; Path=' + path + '; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	if (domain) {
+		cookieString += ' Domain=' + domain + ';';
+	}
+	document.cookie = cookieString;
 }
