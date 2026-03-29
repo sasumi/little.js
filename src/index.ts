@@ -90,6 +90,7 @@ export {
   highlightText,
   html2Text,
   stringToEntity,
+  text2Html,
   unescapeHtml
 } from './html'
 

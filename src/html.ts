@@ -263,7 +263,7 @@ export const unescapeHtml = (html: string): string => {
         .replace(/<br.*>/, "\n");
 };
 
-function markdown2Html(md: string): string {
+export const markdown2Html = (md: string): string => {
     if (!md) {
         return "";
     }
@@ -330,7 +330,7 @@ function markdown2Html(md: string): string {
     html = html.replace(/\n/g, "<br />");
 
     return html.trim();
-}
+};
 
 /**
  * 转义 HTML 到属性值（处理属性中的特殊字符）
