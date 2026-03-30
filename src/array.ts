@@ -7,11 +7,11 @@
  * arrayColumn([{id: 1, name: 'A'}, {id: 2, name: 'B'}], 'name') // ['A', 'B']
  */
 export const arrayColumn = <T = any>(arr: T[], col_name: keyof T): any[] => {
-	let data: any[] = [];
-	for(let i in arr){
-		data.push(arr[i][col_name]);
-	}
-	return data;
+    let data: any[] = [];
+    for (let i in arr) {
+        data.push(arr[i][col_name]);
+    }
+    return data;
 };
 
 /**
@@ -23,32 +23,33 @@ export const arrayColumn = <T = any>(arr: T[], col_name: keyof T): any[] => {
  * arrayIndex(['a', 'b', 'c'], 'b') // '1'
  */
 export const arrayIndex = <T = any>(arr: T[], val: T): string | null => {
-	for(let i in arr){
-		if(arr[i] === val){
-			return i;
-		}
-	}
-	return null;
+    for (let i in arr) {
+        if (arr[i] === val) {
+            return i;
+        }
+    }
+    return null;
 };
-
 
 /**
  * 数组去重
  * @param {T[]} arr - 源数组
+ * @param {function} [payload] - 可选的函数，用于生成唯一键值
  * @returns {T[]} 去重后的数组
  * @example
  * arrayDistinct([1, 2, 2, 3, 3, 3]) // [1, 2, 3]
+ * arrayDistinct([{id: 1}, {id: 2}, {id: 1}], item => item.id) // [{id: 1}, {id: 2}]
  */
-export const arrayDistinct = <T = any>(arr: T[]): T[] => {
-	let tmpMap = new Map();
-	return arr.filter((item: T) => {
-		if(!tmpMap.has(item)){
-			tmpMap.set(item, true);
-			return true;
-		}
-	});
-}
-
+export const arrayDistinct = <T = any>(arr: T[], payload?: (item: T) => any): T[] => {
+    let tmpMap = new Map();
+    return arr.filter((item: T) => {
+        let unique_key = payload ? payload(item) : item;
+        if (!tmpMap.has(unique_key)) {
+            tmpMap.set(unique_key, true);
+            return true;
+        }
+    });
+};
 
 /**
  * 按指定键对数组进行分组
@@ -61,27 +62,26 @@ export const arrayDistinct = <T = any>(arr: T[]): T[] => {
  * // { A: [{type: 'A', val: 1}, {type: 'A', val: 2}] }
  */
 export const arrayGroup = <T extends Record<string, any>>(arr: T[], by_key: keyof T, limit?: boolean): Record<string, T[]> | Record<string, T> => {
-	if(!arr || !arr.length){
-		return arr as any;
-	}
-	let tmp_rst: Record<string, T[]> = {};
-	arr.forEach((item: T) => {
-		let k = item[by_key];
-		if(!tmp_rst[k]){
-			tmp_rst[k] = [];
-		}
-		tmp_rst[k].push(item);
-	});
-	if(!limit){
-		return tmp_rst;
-	}
-	let rst: Record<string, T> = {};
-	for(let i in tmp_rst){
-		rst[i] = tmp_rst[i][0];
-	}
-	return rst;
+    if (!arr || !arr.length) {
+        return arr as any;
+    }
+    let tmp_rst: Record<string, T[]> = {};
+    arr.forEach((item: T) => {
+        let k = item[by_key];
+        if (!tmp_rst[k]) {
+            tmp_rst[k] = [];
+        }
+        tmp_rst[k].push(item);
+    });
+    if (!limit) {
+        return tmp_rst;
+    }
+    let rst: Record<string, T> = {};
+    for (let i in tmp_rst) {
+        rst[i] = tmp_rst[i][0];
+    }
+    return rst;
 };
-
 
 /**
  * 按照对象的键进行字母顺序排序
@@ -91,12 +91,16 @@ export const arrayGroup = <T extends Record<string, any>>(arr: T[], by_key: keyo
  * arraySortByKey({c: 3, a: 1, b: 2}) // {a: 1, b: 2, c: 3}
  */
 export const arraySortByKey = <T extends Record<string, any>>(obj: T): T => {
-	return Object.keys(obj).sort().reduce(function(result: Record<string, any>, key: string){
-		result[key] = obj[key];
-		return result;
-	}, {} as Record<string, any>) as T;
-}
-
+    return Object.keys(obj)
+        .sort()
+        .reduce(
+            function (result: Record<string, any>, key: string) {
+                result[key] = obj[key];
+                return result;
+            },
+            {} as Record<string, any>,
+        ) as T;
+};
 
 /**
  * 将数组分割成指定大小的块
@@ -107,24 +111,24 @@ export const arraySortByKey = <T extends Record<string, any>>(obj: T): T => {
  * arrayChunk([1, 2, 3, 4, 5], 2) // [[1, 2], [3, 4], [5]]
  */
 export const arrayChunk = <T = any>(list: T[], size: number): T[][] => {
-	let len = list.length;
-	if(size < 1 || !len){
-		return [];
-	}
-	if(size > len){
-		return [list];
-	}
-	let res = [];
-	let integer = Math.floor(len / size);
-	let rest = len % size;
-	for(let i = 1; i <= integer; i++){
-		res.push(list.splice(0, size));
-	}
-	if(rest){
-		res.push(list.splice(0, rest));
-	}
-	return res;
-}
+    let len = list.length;
+    if (size < 1 || !len) {
+        return [];
+    }
+    if (size > len) {
+        return [list];
+    }
+    let res = [];
+    let integer = Math.floor(len / size);
+    let rest = len % size;
+    for (let i = 1; i <= integer; i++) {
+        res.push(list.splice(0, size));
+    }
+    if (rest) {
+        res.push(list.splice(0, rest));
+    }
+    return res;
+};
 
 /**
  * 从数组末尾开始移除值为 falsy 的元素，直到遇到第一个 truthy 元素

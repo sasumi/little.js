@@ -89,6 +89,7 @@ export {
   escapeHtml,
   highlightText,
   html2Text,
+  markdown2Html,
   stringToEntity,
   text2Html,
   unescapeHtml
