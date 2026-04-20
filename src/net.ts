@@ -146,9 +146,10 @@ export const abortableFetch = (url: string, fetchOption: RequestInit = {}, timeo
     return addAbortMethod(fetchPromise);
 };
 
-// 扩展 RequestInit，添加 timeout 和其他自定义属性，timeout 用于设置请求超时时间，其他自定义属性可以直接添加到 headers 中
+// 扩展 RequestInit，添加 timeout 和其他自定义属性，timeout 用于设置请求超时时间，delay 用于模拟慢速请求，其他自定义属性可以直接添加到 headers 中
 interface RequestOption extends RequestInit {
     timeout?: number;
+    delay?: number;
     [key: string]: any;
 }
 
@@ -186,12 +187,15 @@ const isRequestInitProp = (key: string): boolean => {
  * @param {string} url - 请求 URL
  * @param {BodyInit|null} [data=null] - 请求数据,可以是字符串、FormData、URLSearchParams、Blob、ArrayBuffer 等，如果是对象会根据 ContentType 自动转换（例如 application/json 会自动 JSON.stringify）
  * @param {RequestOption} option - 请求选项
+ * @param {number} [option.timeout] - 请求超时时间（毫秒）
+ * @param {number} [option.delay] - 延迟响应时间（毫秒），用于模拟慢速请求
  * @returns {AbortablePromise<Response>} 返回可中止的 Promise
  * @example
  * request('/api/data', null, {method: 'GET'})
+ * request('/api/data', null, {method: 'GET', delay: 2000}) // 延迟 2 秒响应
  */
 export const request = (url: string, data: BodyInit | null = null, option: RequestOption): AbortablePromise<Response> => {
-    let { timeout, ...fetchOption } = option;
+    let { timeout, delay, ...fetchOption } = option;
     fetchOption = fetchOption || {};
     fetchOption.method = fetchOption.method || "GET";
 
@@ -224,6 +228,12 @@ export const request = (url: string, data: BodyInit | null = null, option: Reque
     ).then((response) => {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        // 如果设置了延迟，则延迟返回响应
+        if (delay && delay > 0) {
+            return new Promise<Response>((resolve) => {
+                setTimeout(() => resolve(response), delay);
+            });
         }
         return response;
     }) as AbortablePromise<Response>;
