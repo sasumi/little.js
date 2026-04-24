@@ -222,8 +222,11 @@ export {
   WEEK_DAY_NAMES_SHORT_CN,
   WEEK_DAY_NAMES_SHORT_EN,
   YEAR_NOW,
+  convertMinutesToTimezoneOffsetStr,
   countDown,
   formatDate,
+  getTimezoneOffsetMinutes,
+  getTimezoneOffsetStr,
   getWeekNumber,
   msToHMS
 } from './time'

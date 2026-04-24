@@ -275,6 +275,70 @@ export const formatDate = function (format: string, date: Date | number | string
 };
 
 /**
+ * 根据时区名称获取该时区相对于 UTC 的分钟偏移量（分钟）
+ * @param timeZone - 时区名称（如 "America/New_York"）
+ * @param date - 可选的日期对象，默认为当前时间
+ */
+export const getTimezoneOffsetMinutes = (timeZone: string): number => {
+    const date = new Date();
+    const utcFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'UTC',
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+    });
+
+    const tzFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: timeZone,
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+    });
+
+    const utcParts = utcFormatter.formatToParts(date);
+    const tzParts = tzFormatter.formatToParts(date);
+
+    const getTimestamp = (parts: Intl.DateTimeFormatPart[]) => {
+        const year = parts.find(p => p.type === 'year')!.value;
+        const month = parts.find(p => p.type === 'month')!.value;
+        const day = parts.find(p => p.type === 'day')!.value;
+        const hour = parts.find(p => p.type === 'hour')!.value;
+        const minute = parts.find(p => p.type === 'minute')!.value;
+        const second = parts.find(p => p.type === 'second')!.value;
+        return Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second));
+    };
+
+    const utcTime = getTimestamp(utcParts);
+    const tzTime = getTimestamp(tzParts);
+    const offsetMinutes = (utcTime - tzTime) / 1000 / 60;
+    return offsetMinutes;
+}
+
+export const convertMinutesToTimezoneOffsetStr = (offsetMinutes: number): string => {
+    const offsetHours = Math.floor(offsetMinutes / 60);
+    const offsetRemainingMinutes = Math.abs(offsetMinutes % 60);
+    return `${offsetHours >= 0 ? "+" : "-"}${String(Math.abs(offsetHours)).padStart(2, "0")}:${String(offsetRemainingMinutes).padStart(2, "0")}`;
+}
+
+/**
+ * 根据时区名称获取该时区相对于 UTC 的偏移字符串（格式为 "+HH:MM" 或 "-HH:MM"）
+ * @param timeZone - 时区名称（如 "America/New_York"）
+ * @returns 偏移字符串（如 "-05:00"）
+ * @example
+ * getTimezoneOffsetStr("America/New_York") // "-05:00"
+ */
+export const getTimezoneOffsetStr = (timeZone: string): string => {
+    const offsetMinutes = getTimezoneOffsetMinutes(timeZone);
+    return convertMinutesToTimezoneOffsetStr(offsetMinutes);
+};
+
+/**
  * 获取日期所在周数（ISO 8601 标准）
  * @param {Date} date - 日期对象
  * @returns {number} 返回周数
