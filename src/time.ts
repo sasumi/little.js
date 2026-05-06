@@ -34,9 +34,6 @@ export const WEEK_DAY_NAMES_CN = ["星期日", "星期一", "星期二", "星期
 
 /**
  * 倒计时函数（该方法采用 setTimeout 方式，不够精准）
- * @param {number} timeout - 倒计时总秒数
- * @param {Function} [tickFunc] - 每秒回调函数，接收剩余秒数作为参数
- * @param {Function} [onFinish] - 倒计时结束回调函数
  * @returns {void}
  * @example
  * countDown(10, (sec) => console.log(sec), () => console.log('done'))
@@ -55,8 +52,6 @@ export const countDown = (timeout: number, tickFunc?: (timeout: number) => void,
 
 /**
  * 毫秒转换为“时分秒前”格式
- * @param {number} ms - 毫秒数
- * @returns {string} 返回格式化后的字符串
  * @example
  * msToHMS(3661000) // '1小时0分钟1秒前'
  */
@@ -73,6 +68,36 @@ export const msToHMS = (ms: number) => {
     if (m > 0 || h > 0) str += m + "分钟";
     str += s + "秒前";
     return str;
+};
+
+/**
+ * 将时间戳转换为本地时间的日期时间字符串（YYYY-MM-DDTHH:mm），
+ * 一般用于填充到 input[type="datetime-local"] 的 value 属性中
+ * @param timestamp 时间戳，可以是数字、字符串或 Date 对象
+ * @param includeSec 是否包含秒，默认为 false，如果为 true 则返回的字符串格式为 YYYY-MM-DDTHH:mm:ss
+ * @returns 本地时间的日期时间字符串，格式为 YYYY-MM-DDTHH:mm:ss（如果 includeSec 参数为 true 则包含秒）
+ */
+export const timestampToDateTimeLocal = (timestamp: number | string | Date, includeSec: boolean = false): string => {
+    const date = new Date(timestamp);
+    const localIsoString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+        .toISOString()
+        .slice(0, includeSec ? 19 : 16); // 截取前 16 位得到 YYYY-MM-DDTHH:mm，包含秒则截取前 19 位
+    return localIsoString;
+}
+
+/**
+ * 计算剩余时间，单位为毫秒
+ * @param progress 当前进度
+ * @param total 总进度
+ * @param startTime 开始时间（毫秒时间戳）
+ * @returns 剩余时间，单位毫秒
+ * @description 根据当前进度、总进度和已用时间估算剩余时间。公式为：剩余时间 = (已用时间 / 当前进度) * (总进度 - 当前进度)。如果当前进度为0，则返回Infinity。
+ */
+export const calcRemainingMSecs = (progress: number, total: number, startTime: number): number => {
+    if (progress <= 0) return Infinity;
+    const elapsedTime = Date.now() - startTime;
+    const estimatedTotalTime = (elapsedTime / progress) * (total - progress);
+    return estimatedTotalTime; // 返回毫秒数
 };
 
 /**

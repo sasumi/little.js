@@ -3,23 +3,31 @@ import { between } from "./math";
 
 /**
  * 隐藏节点（通过设置 display:none 方式）
+ * 注：只有 HTMLElement 才有 style 属性，其他类型的 Node 没有，因此需要断言为 HTMLElement
  * @param {HTMLElement|string} dom - DOM 元素或选择器
  * @returns {void}
  * @example
  * hide('#myElement')
  */
 export const hide = (dom: HTMLElement | string): void => {
-    findOne(dom).style.display = "none";
+    const element = findOne(dom);
+    if (element) {
+        (element as HTMLElement).style.display = "none";
+    }
 };
 /**
  * 显示节点（通过设置 display 为空方式）
+ * 注：只有 HTMLElement 才有 style 属性，其他类型的 Node 没有，因此需要断言为 HTMLElement
  * @param {HTMLElement|string} dom - DOM 元素或选择器
  * @returns {void}
  * @example
  * show('#myElement')
  */
 export const show = (dom: HTMLElement | string): void => {
-    findOne(dom).style.display = "";
+    const element = findOne(dom);
+    if (element) {
+        (element as HTMLElement).style.display = "";
+    }
 };
 
 /**
@@ -116,16 +124,13 @@ export const nodeIndex = (node: HTMLElement): number => {
 
 /**
  * 通过选择器查找子节点（强制添加 :scope 来约束必须是子节点）
- * @param {string|HTMLElement|HTMLElement[]|NodeList|HTMLCollection} selector - 选择器或 DOM 元素
- * @param {Document|HTMLElement} [parent=document] - 父节点，默认为 document
- * @returns {HTMLElement[]} 返回查找到的所有元素数组
  * @example
  * findAll('.item', container)
  */
 export const findAll = (
-    selector: string | HTMLElement | HTMLElement[] | NodeList | HTMLCollection,
-    parent: Document | HTMLElement = document,
-): HTMLElement[] => {
+    selector: string | Element | Element[],
+    parent: Document | DocumentFragment | Element = document,
+): Element[] => {
     if (typeof selector === "string") {
         selector = selector.trim();
         if (selector.indexOf(":scope") !== 0) {
@@ -133,13 +138,13 @@ export const findAll = (
         }
         return Array.from(parent.querySelectorAll(selector));
     } else if (Array.isArray(selector)) {
-        let ns: HTMLElement[] = [];
+        let ns: Element[] = [];
         selector.forEach((sel) => {
             ns.push(...findAll(sel));
         });
         return ns;
     } else if (NodeList.prototype.isPrototypeOf(selector) || HTMLCollection.prototype.isPrototypeOf(selector)) {
-        return Array.from(selector as any) as HTMLElement[];
+        return Array.from(selector as any) as Element[];
     } else if (selector instanceof HTMLElement) {
         return [selector];
     } else {
@@ -149,14 +154,11 @@ export const findAll = (
 
 /**
  * 通过选择器查找单个节点
- * @param {string|HTMLElement} selector - 选择器，如果是 HTMLElement，则直接返回
- * @param {Document|HTMLElement} [parent=document] - 父节点，默认为 document
- * @returns {HTMLElement} 返回查找到的元素
  * @example
  * findOne('.item')
  */
-export const findOne = (selector: string | HTMLElement, parent: Document | HTMLElement = document): HTMLElement => {
-    return typeof selector === "string" ? (parent.querySelector(selector) as HTMLElement) : selector;
+export const findOne = (selector: string | Element, parent: Document | DocumentFragment | Element = document): Element | null => {
+    return typeof selector === "string" ? parent.querySelector(selector) : selector;
 };
 /**
  * 获取节点的 XPath
