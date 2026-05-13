@@ -1,4 +1,16 @@
 
+// 常见DPI
+export const COMMON_DPI = 96;
+
+// 当前屏幕DPI
+export const SCREEN_DPI = window.devicePixelRatio * COMMON_DPI;
+
+// 是否横屏
+export const isLandscape = () => window.innerWidth > window.innerHeight;
+
+// 是否竖屏
+export const isPortrait = () => window.innerHeight > window.innerWidth;
+
 /**
  * 进入全屏模式
  * @param {HTMLElement} element - 要全屏显示的元素
@@ -55,7 +67,7 @@ export const toggleFullScreen = (element: any): Promise<unknown> => {
  * @example
  * isInFullScreen() // false
  */
-export const isInFullScreen = () => {
+export const isInFullScreen = (): boolean => {
 	return !!document.fullscreenElement;
 }
 
@@ -66,21 +78,21 @@ export const isInFullScreen = () => {
  * @example
  * detectLanguage(['en', 'zh-CN', 'zh']) // '根据浏览器语言返回匹配的语言'
  */
-export const detectLanguage = (supportedLngs: string[]) => {
-    const browserLang = navigator.language || (navigator as any).userLanguage;
+export const detectLanguage = (supportedLngs: string[]): string => {
+	const browserLang = navigator.language || (navigator as any).userLanguage;
 
-    // 尝试完全匹配
-    if (supportedLngs.includes(browserLang)) {
-        return browserLang;
-    }
+	// 尝试完全匹配
+	if (supportedLngs.includes(browserLang)) {
+		return browserLang;
+	}
 
-    // 尝试匹配语言代码的前缀 (例如 zh-CN -> zh)
-    const langPrefix = browserLang.split("-")[0];
-    const match = supportedLngs.find((lng) => lng.startsWith(langPrefix));
-    if (match) {
-        return match;
-    }
-    return supportedLngs[0];
+	// 尝试匹配语言代码的前缀 (例如 zh-CN -> zh)
+	const langPrefix = browserLang.split("-")[0];
+	const match = supportedLngs.find((lng) => lng.startsWith(langPrefix));
+	if (match) {
+		return match;
+	}
+	return supportedLngs[0];
 };
 
 /**
@@ -89,6 +101,6 @@ export const detectLanguage = (supportedLngs: string[]) => {
  * @example
  * isFirefox() // false
  */
-export const isFirefox = () => {
-    return navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
+export const isFirefox = (): boolean => {
+	return navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
 };

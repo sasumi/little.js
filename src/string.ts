@@ -11,16 +11,49 @@ export function capitalize(str: string): string {
 }
 
 /**
- * 将字符串转换为浮点数
- * @param {string} str - 要转换的字符串
- * @param {number} [defaultVal=0] - 转换失败时的默认值
+ * 判断一个值是否为数字
+ * @param val - 要判断的值
+ * @returns 如果是数字返回 true，否则返回 false
  */
-export const floatVal = (str: string, defaultVal: number = 0): number => {
-    if (!str || typeof str !== "string") {
+export const isNumberic = (val: any): boolean => {
+    if (typeof val === 'number') {
+        return isFinite(val) ? true : false;
+    }
+    if (typeof val !== 'string') {
+        return false;
+    }
+    return !isNaN(parseFloat(val));
+}
+
+/**
+ * 解析带单位的值，返回数值和单位
+ */
+export const parseUnit = (value: string | number, defaultUnit = ""): { val: number; unit: string } | null => {
+    if (typeof value === "number") {
+        return { val: value, unit: defaultUnit };
+    }
+    if (!Number.isNaN(value)) {
+        return { val: parseFloat(value), unit: defaultUnit };
+    }
+    const regex = /^(-?[\d.]+)([a-z%]+)$/i;
+    const match = value.trim().match(regex);
+    if (!match) {
+        throw new Error("unit parse fail:" + value);
+    }
+    return { val: parseFloat(match[1]), unit: match[2].toLowerCase() };
+};
+
+/**
+ * 将字符串转换为浮点数
+ * @param {*} str - 要转换的字符串
+ * @param {number} [defaultVal=0] - 转换失败时的默认值
+ * @returns {number} 返回转换后的浮点数，如果转换失败则返回默认值
+ */
+export const floatVal = (str: any, defaultVal: number = 0): number => {
+    if (!isNumberic(str)) {
         return defaultVal;
     }
-    const val = parseFloat(str);
-    return isNaN(val) ? defaultVal : val;
+    return parseFloat(str);
 };
 
 /**

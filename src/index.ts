@@ -19,11 +19,15 @@ export {
 
 // Browser utilities
 export {
+  COMMON_DPI,
+  SCREEN_DPI,
   detectLanguage,
   enterFullScreen,
   exitFullScreen,
   isFirefox,
   isInFullScreen,
+  isLandscape,
+  isPortrait,
   toggleFullScreen
 } from './browser'
 
@@ -70,7 +74,8 @@ export {
 export {
   dispatchEvent,
   offEvent,
-  onEvent
+  onEvent,
+  onEvents
 } from './event'
 
 // File utilities
@@ -105,7 +110,10 @@ export {
 // Img utilities
 export {
   imgToBase64,
-  srcToBase64
+  srcToBase64,
+  svgToImg,
+  svgToImgData,
+  svgToSrc
 } from './img'
 
 // Math utilities
@@ -164,7 +172,8 @@ export {
   deepClone,
   isEmptyObject,
   objectGet,
-  objectKeyMapping,
+  objectKeyReplace,
+  objectKeyValSwap,
   objectMerge,
   objectSet
 } from './object'
@@ -181,7 +190,9 @@ export {
   floatVal,
   getUTF8StrLen,
   isChinese,
+  isNumberic,
   kebabCase,
+  parseUnit,
   randomString,
   randomWords,
   regQuote,

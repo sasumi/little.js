@@ -41,7 +41,7 @@ export function isEmptyObject(obj: object): boolean {
  * @example
  * objectKeyMapping({a: 1, b: 2}, {a: 'x'}) // {x: 1, b: 2}
  */
-export const objectKeyMapping = (obj: Record<string, any>, mapping: Record<string, string>): Record<string, any> => {
+export const objectKeyReplace = (obj: Record<string, any>, mapping: Record<string, string>): Record<string, any> => {
     let ret: Record<string, any> = {};
     for (let key in obj) {
         if (mapping[key] !== undefined) {
@@ -51,6 +51,15 @@ export const objectKeyMapping = (obj: Record<string, any>, mapping: Record<strin
         }
     }
     return ret;
+};
+
+/**
+ * 交换对象中的键值对
+ * @param {Object} obj
+ * @returns
+ */
+export const objectKeyValSwap = (obj: object) => {
+    return Object.fromEntries(Object.entries(obj).map(([k, v]) => [v, k]));
 };
 
 /**
