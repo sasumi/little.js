@@ -31,9 +31,9 @@ export const imgToBase64 = (img: HTMLImageElement): string | null => {
  * svg 对象转换为图片数据
  */
 export const svgToSrc = (svg: SVGSVGElement) => {
-	const svgString = new XMLSerializer().serializeToString(svg);
-	const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-	return URL.createObjectURL(svgBlob);
+    const svgString = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+    return URL.createObjectURL(svgBlob);
 };
 
 /**
@@ -41,19 +41,19 @@ export const svgToSrc = (svg: SVGSVGElement) => {
  * @returns
  */
 export const svgToImg = (svg: SVGSVGElement): Promise<HTMLImageElement> => {
-	return new Promise((resolve, reject) => {
-		const src = svgToSrc(svg);
-		const img = new Image();
-		img.onload = () => {
-			resolve(img);
-		};
+    return new Promise((resolve, reject) => {
+        const src = svgToSrc(svg);
+        const img = new Image();
+        img.onload = () => {
+            resolve(img);
+        };
 
-		img.onerror = (err) => {
-			reject(new Error("Failed to load SVG into Image:" + err));
-		};
+        img.onerror = (err) => {
+            reject(new Error("Failed to load SVG into Image:" + err));
+        };
 
-		img.src = src;
-	});
+        img.src = src;
+    });
 };
 
 /**
@@ -64,20 +64,20 @@ export const svgToImg = (svg: SVGSVGElement): Promise<HTMLImageElement> => {
  * @returns
  */
 export const svgToImgData = (svg: SVGSVGElement, format: string | null = null, quality: number | null = null): Promise<string> => {
-	format = format || "image/png";
-	return new Promise((resolve, reject) => {
-		const normalizedQuality = isNumberic(quality) ? floatVal(quality) : 1;
-		svgToImg(svg).then((img) => {
-			const { width, height } = svgGetBBox(svg);
-			const canvas = document.createElement("canvas");
-			canvas.width = width * normalizedQuality;
-			canvas.height = height * normalizedQuality;
-			const ctx = canvas.getContext("2d")!;
-			ctx.drawImage(img, 0, 0, width * normalizedQuality, height * normalizedQuality);
-			URL.revokeObjectURL((img as HTMLImageElement).src);
-			resolve(canvas.toDataURL(format));
-		}, reject);
-	});
+    format = format || "image/png";
+    return new Promise((resolve, reject) => {
+        const normalizedQuality = isNumberic(quality) ? floatVal(quality) : 1;
+        svgToImg(svg).then((img) => {
+            const { width, height } = svgGetBBox(svg);
+            const canvas = document.createElement("canvas");
+            canvas.width = width * normalizedQuality;
+            canvas.height = height * normalizedQuality;
+            const ctx = canvas.getContext("2d")!;
+            ctx.drawImage(img, 0, 0, width * normalizedQuality, height * normalizedQuality);
+            URL.revokeObjectURL((img as HTMLImageElement).src);
+            resolve(canvas.toDataURL(format));
+        }, reject);
+    });
 };
 
 /**
@@ -88,20 +88,20 @@ export const svgToImgData = (svg: SVGSVGElement, format: string | null = null, q
  * @returns {DOMRect.height} 单位px
  * @see https://stackoverflow.com/questions/60814803/getboundingbox-of-svg-element-in-firefox
  */
-const svgGetBBox = (svg: SVGSVGElement) => {
-	if (!isFirefox()) {
-		return svg.getBBox();
-	}
+export const svgGetBBox = (svg: SVGSVGElement): DOMRect => {
+    if (!isFirefox()) {
+        return svg.getBBox();
+    }
 
-	// 克隆并插入到隐藏容器
-	const clone = svg.cloneNode(true) as SVGSVGElement;
-	const div = document.createElement("div");
-	div.style.cssText = "position:fixed;left:-9999px;top:-9999px;visibility:hidden;";
-	div.appendChild(clone as unknown as Node);
-	document.body.appendChild(div);
-	const bbox = clone.getBBox();
-	document.body.removeChild(div);
-	return bbox;
+    // 克隆并插入到隐藏容器
+    const clone = svg.cloneNode(true) as SVGSVGElement;
+    const div = document.createElement("div");
+    div.style.cssText = "position:fixed;left:-9999px;top:-9999px;visibility:hidden;";
+    div.appendChild(clone as unknown as Node);
+    document.body.appendChild(div);
+    const bbox = clone.getBBox();
+    document.body.removeChild(div);
+    return bbox;
 };
 
 
