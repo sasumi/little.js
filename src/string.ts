@@ -1,3 +1,5 @@
+import { isNumberic } from "./math";
+
 /**
  * 首字母大写
  * @param str - 输入字符串
@@ -8,21 +10,6 @@
 export function capitalize(str: string): string {
     if (!str) return str;
     return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-/**
- * 判断一个值是否为数字
- * @param val - 要判断的值
- * @returns 如果是数字返回 true，否则返回 false
- */
-export const isNumberic = (val: any): boolean => {
-    if (typeof val === 'number') {
-        return isFinite(val) ? true : false;
-    }
-    if (typeof val !== 'string') {
-        return false;
-    }
-    return !isNaN(parseFloat(val));
 }
 
 /**

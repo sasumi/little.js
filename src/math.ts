@@ -1,5 +1,3 @@
-import { isNumberic } from "./string";
-
 /** 黄金分割比 0.618 **/
 export const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2 - 1;
 
@@ -102,6 +100,21 @@ export const randomInt = (min: number, max: number): number => {
 export const round = (num: number, precision: number = 2): number => {
 	let multiple = Math.pow(10, precision);
 	return Math.round(num * multiple) / multiple;
+}
+
+/**
+ * 判断一个值是否为数字
+ * @param val - 要判断的值
+ * @returns 如果是数字返回 true，否则返回 false
+ */
+export const isNumberic = (val: any): boolean => {
+    if (typeof val === 'number') {
+        return isFinite(val) ? true : false;
+    }
+    if (typeof val !== 'string') {
+        return false;
+    }
+    return !isNaN(parseFloat(val));
 }
 
 /**

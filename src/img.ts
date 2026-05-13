@@ -1,7 +1,8 @@
 import { blobToBase64 } from "./base64";
 import { isFirefox } from "./browser";
 import { urlB64DataCache } from "./file";
-import { floatVal, isNumberic } from "./string";
+import { isNumberic } from "./math";
+import { floatVal } from "./string";
 
 /**
  * 通过 Image 元素获取 Base64 数据
