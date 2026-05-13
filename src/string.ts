@@ -32,7 +32,7 @@ export const parseUnit = (value: string | number, defaultUnit = ""): { val: numb
     if (typeof value === "number") {
         return { val: value, unit: defaultUnit };
     }
-    if (!Number.isNaN(value)) {
+    if (isNumberic(value)) {
         return { val: parseFloat(value), unit: defaultUnit };
     }
     const regex = /^(-?[\d.]+)([a-z%]+)$/i;

@@ -1,3 +1,5 @@
+import { isNumberic } from "./string";
+
 /** 黄金分割比 0.618 **/
 export const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2 - 1;
 
@@ -110,7 +112,7 @@ export const round = (num: number, precision: number = 2): number => {
 export const detectedPrecision = (...numbers: number[]): number => {
     let maxPrecision = 0;
     numbers.forEach((num) => {
-        if (typeof num === "number" && !isNaN(num)) {
+        if (typeof num === "number" && isNumberic(num)) {
             const decimalPart = num.toString().split(".")[1];
             if (decimalPart) {
                 maxPrecision = Math.max(maxPrecision, decimalPart.length);
