@@ -86,9 +86,6 @@ export const svgToImgData = (svg: SVGSVGElement, format: string | null = null, q
  * @returns {DOMRect} 返回包含像素单位的尺寸对象
  * @returns {number} DOMRect.width - 宽度（像素）
  * @returns {number} DOMRect.height - 高度（像素）
- * @example
- * // <svg width="210mm" height="297mm" viewBox="0 0 210 297">
- * svgGetBBox(svg) // { x: 0, y: 0, width: 793.7, height: 1122.5 } (像素)
  */
 export const svgGetDimenssion = (svg: SVGSVGElement): [number, number] => {
     let width: number | null = null;
