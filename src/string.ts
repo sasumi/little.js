@@ -1,3 +1,4 @@
+import { SCREEN_DPI } from "./browser";
 import { isNumberic } from "./math";
 
 /**
@@ -28,6 +29,67 @@ export const parseUnit = (value: string | number, defaultUnit = ""): { val: numb
         throw new Error("unit parse fail:" + value);
     }
     return { val: parseFloat(match[1]), unit: match[2].toLowerCase() };
+};
+
+/**
+ * 单位转换工具，支持px、mm、cm、in等常见单位之间的转换
+ * @returns {Number} 转换后的数值（以目标单位为准）
+ */
+export const unitConvert = (
+    value: string | number,
+    toUnit: string,
+    extOption: {
+        dpi?: number;
+        fontSize?: number | null;
+        lineHeight?: number | null;
+    } = {},
+): number => {
+    const match = parseUnit(value);
+    if (!match) {
+        throw new Error(`Invalid value: ${value}`);
+    }
+    const num = match.val;
+    const fromUnit = match.unit;
+    if (!isNumberic(num)) {
+        throw new Error(`Invalid number in value: ${value}`);
+    }
+    const dpi = extOption.dpi || SCREEN_DPI;
+    
+    // 如果单位相同，直接返回
+    if (fromUnit === toUnit) {
+        return num;
+    }
+
+    // 单位到mm的转换系数
+    const toMmFactors: Record<string, number> = {
+        mm: 1,
+        cm: 10,
+        in: 25.4,
+        px: 25.4 / dpi,
+        pt: 25.4 / 72, // 1pt = 1/72 inch
+        pc: 25.4 / 6, // 1pc = 1/6 inch
+    };
+
+    // mm到目标单位的转换系数
+    const fromMmFactors: Record<string, number> = {
+        mm: 1,
+        cm: 1 / 10,
+        in: 1 / 25.4,
+        px: dpi / 25.4,
+        pt: 72 / 25.4,
+        pc: 6 / 25.4,
+    };
+
+    if (!toMmFactors[fromUnit]) {
+        throw new Error(`Unsupported source unit: ${fromUnit}`);
+    }
+    if (!fromMmFactors[toUnit]) {
+        throw new Error(`Unsupported target unit: ${toUnit}`);
+    }
+
+    // 先转换为mm，再转换为目标单位
+    const valueInMm = num * toMmFactors[fromUnit];
+    return valueInMm * fromMmFactors[toUnit];
 };
 
 /**

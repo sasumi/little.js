@@ -1,8 +1,7 @@
 import { blobToBase64 } from "./base64";
-import { isFirefox } from "./browser";
 import { urlB64DataCache } from "./file";
 import { isNumberic } from "./math";
-import { floatVal } from "./string";
+import { floatVal, parseUnit, unitConvert } from "./string";
 
 /**
  * 通过 Image 元素获取 Base64 数据
@@ -68,7 +67,7 @@ export const svgToImgData = (svg: SVGSVGElement, format: string | null = null, q
     return new Promise((resolve, reject) => {
         const normalizedQuality = isNumberic(quality) ? floatVal(quality) : 1;
         svgToImg(svg).then((img) => {
-            const { width, height } = svgGetBBox(svg);
+            const [width, height] = svgGetDimenssion(svg);
             const canvas = document.createElement("canvas");
             canvas.width = width * normalizedQuality;
             canvas.height = height * normalizedQuality;
@@ -81,29 +80,56 @@ export const svgToImgData = (svg: SVGSVGElement, format: string | null = null, q
 };
 
 /**
- * 兼容方式获取svg的BBox，避免Firefox获取svg尺寸时，额外考虑了父容器的zoom
- * @param {SVGSVGElement} svg
- * @returns {DOMRect}
- * @returns {DOMRect.width} 单位px
- * @returns {DOMRect.height} 单位px
- * @see https://stackoverflow.com/questions/60814803/getboundingbox-of-svg-element-in-firefox
+ * 获取 SVG 的尺寸（像素单位）
+ * 优先级：width/height 属性 > viewBox > getBoundingClientRect
+ * @param {SVGSVGElement} svg - SVG 元素
+ * @returns {DOMRect} 返回包含像素单位的尺寸对象
+ * @returns {number} DOMRect.width - 宽度（像素）
+ * @returns {number} DOMRect.height - 高度（像素）
+ * @example
+ * // <svg width="210mm" height="297mm" viewBox="0 0 210 297">
+ * svgGetBBox(svg) // { x: 0, y: 0, width: 793.7, height: 1122.5 } (像素)
  */
-export const svgGetBBox = (svg: SVGSVGElement): DOMRect => {
-    if (!isFirefox()) {
-        return svg.getBBox();
+export const svgGetDimenssion = (svg: SVGSVGElement): [number, number] => {
+    let width: number | null = null;
+    let height: number | null = null;
+
+    // 优先从 width/height 属性获取（可能带单位）
+    const widthAttr = svg.getAttribute('width');
+    const heightAttr = svg.getAttribute('height');
+
+    if (widthAttr && heightAttr) {
+        try {
+            const widthParsed = parseUnit(widthAttr, 'px');
+            const heightParsed = parseUnit(heightAttr, 'px');
+            if (widthParsed && heightParsed) {
+                width = unitConvert(widthParsed.val + widthParsed.unit, 'px');
+                height = unitConvert(heightParsed.val + heightParsed.unit, 'px');
+            }
+        } catch (e) {
+            // 解析失败，继续尝试其他方法
+        }
     }
 
-    // 克隆并插入到隐藏容器
-    const clone = svg.cloneNode(true) as SVGSVGElement;
-    const div = document.createElement("div");
-    div.style.cssText = "position:fixed;left:-9999px;top:-9999px;visibility:hidden;";
-    div.appendChild(clone as unknown as Node);
-    document.body.appendChild(div);
-    const bbox = clone.getBBox();
-    document.body.removeChild(div);
-    return bbox;
-};
+    // 如果没有 width/height 属性，尝试从 viewBox 获取
+    if (width === null || height === null) {
+        const viewBox = svg.viewBox.baseVal;
+        if (viewBox && viewBox.width && viewBox.height) {
+            // viewBox 值默认为用户单位，通常对应像素
+            width = viewBox.width;
+            height = viewBox.height;
+        }
+    }
 
+    // 后备方案：使用 getBoundingClientRect（已经是像素）
+    if (width === null || height === null) {
+        const rect = svg.getBoundingClientRect();
+        width = rect.width;
+        height = rect.height;
+    }
+
+    return [width, height];
+};
 
 /**
  * 通过图片 URL 获取 Base64（网络请求模式）

@@ -111,6 +111,7 @@ export {
 export {
   imgToBase64,
   srcToBase64,
+  svgGetDimenssion as svgGetBBox,
   svgToImg,
   svgToImgData,
   svgToSrc
