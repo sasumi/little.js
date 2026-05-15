@@ -106,15 +106,21 @@ export const round = (num: number, precision: number = 2): number => {
  * 判断一个值是否为数字
  * @param val - 要判断的值
  * @returns 如果是数字返回 true，否则返回 false
+ * @example
+ * isNumberic(123) // true
+ * isNumberic('123.45') // true
+ * isNumberic('-123') // true
+ * isNumberic('210mm') // false
  */
 export const isNumberic = (val: any): boolean => {
     if (typeof val === 'number') {
-        return isFinite(val) ? true : false;
+        return isFinite(val);
     }
     if (typeof val !== 'string') {
         return false;
     }
-    return !isNaN(parseFloat(val));
+    // 使用正则表达式严格匹配纯数字字符串，避免 "210mm" 这种被判断为数字
+    return /^[+-]?(\d+\.?\d*|\.\d+)$/.test(val);
 }
 
 /**

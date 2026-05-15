@@ -111,7 +111,6 @@ export {
 export {
   imgToBase64,
   srcToBase64,
-  svgGetDimenssion,
   svgToImg,
   svgToImgData,
   svgToSrc
@@ -202,6 +201,7 @@ export {
   stripSlashes,
   trim,
   truncate,
+  unitConvert,
   utf8Decode,
   utf8Encode
 } from './string'

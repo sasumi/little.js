@@ -67,7 +67,7 @@ export const svgToImgData = (svg: SVGSVGElement, format: string | null = null, q
     return new Promise((resolve, reject) => {
         const normalizedQuality = isNumberic(quality) ? floatVal(quality) : 1;
         svgToImg(svg).then((img) => {
-            const [width, height] = svgGetDimenssion(svg);
+            const [width, height] = svgGetDimension(svg);
             const canvas = document.createElement("canvas");
             canvas.width = width * normalizedQuality;
             canvas.height = height * normalizedQuality;
@@ -87,7 +87,7 @@ export const svgToImgData = (svg: SVGSVGElement, format: string | null = null, q
  * @returns {number} DOMRect.width - 宽度（像素）
  * @returns {number} DOMRect.height - 高度（像素）
  */
-export const svgGetDimenssion = (svg: SVGSVGElement): [number, number] => {
+export const svgGetDimension = (svg: SVGSVGElement): [number, number] => {
     let width: number | null = null;
     let height: number | null = null;
 
