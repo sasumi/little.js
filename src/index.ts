@@ -111,6 +111,7 @@ export {
 export {
   imgToBase64,
   srcToBase64,
+  svgGetDimension,
   svgToImg,
   svgToImgData,
   svgToSrc
@@ -172,11 +173,13 @@ export {
   cleanNull,
   deepClone,
   isEmptyObject,
+  objectEntries,
+  objectFromEntries,
   objectGet,
   objectKeyReplace,
-  objectKeyValSwap,
   objectMerge,
-  objectSet
+  objectSet,
+  objectSwitchKV
 } from './object'
 
 // String utilities

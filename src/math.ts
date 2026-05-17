@@ -148,7 +148,7 @@ export const detectedPrecision = (...numbers: number[]): number => {
  * @example
  * digitCount(123) // 3
  */
-export const digitCount = (n: number) => {
+export const digitCount = (n: number): number => {
     n = Math.abs(Number(n)); // 取绝对值，防止负数
     if (n === 0) return 1;
     return Math.floor(Math.log10(n)) + 1;

@@ -34,12 +34,12 @@ export function isEmptyObject(obj: object): boolean {
 }
 
 /**
- * 对象属性名转换（根据映射表重命名属性）
- * @param {Record<string, any>} obj - 源对象
- * @param {Record<string, string>} mapping - 属性名映射表
- * @returns {Record<string, any>} 返回转换后的对象
+ * 根据映射关系替换对象的键
+ * @param obj - 要替换键的对象
+ * @param mapping - 键映射关系，例如 { oldKey: 'newKey' }
+ * @returns 替换键后的新对象
  * @example
- * objectKeyMapping({a: 1, b: 2}, {a: 'x'}) // {x: 1, b: 2}
+ * objectKeyReplace({ a: 1, b: 2 }, { a: 'x' }) // { x: 1, b: 2 }
  */
 export const objectKeyReplace = (obj: Record<string, any>, mapping: Record<string, string>): Record<string, any> => {
     let ret: Record<string, any> = {};
@@ -54,11 +54,43 @@ export const objectKeyReplace = (obj: Record<string, any>, mapping: Record<strin
 };
 
 /**
- * 交换对象中的键值对
- * @param {Object} obj
- * @returns
+ * 获取对象的键值对数组，代替 Object.entries，如果key是数字，则转换为数字类型
+ * @param obj - 要获取键值对的对象
+ * @returns 键值对数组
+ * @example
+ * objectEntries({ a: 1, b: 2 }) // [['a', 1], ['b', 2]]
  */
-export const objectKeyValSwap = (obj: object) => {
+export const objectEntries = <T extends Record<string | number | symbol, any>>(obj: T) => {
+    return Object.entries(obj).map(([key, value]) => {
+        const parsedKey = /^\d+$/.test(key) ? Number(key) : key;
+        return [parsedKey, value] as [keyof T, T[keyof T]];
+    });
+}
+
+/**
+ * 从键值对数组创建对象，代替 Object.fromEntries，如果key是数字字符串，则转换为数字类型
+ * @param entries - 键值对数组
+ * @returns 创建的对象
+ * @example
+ * objectFromEntries([['a', 1], ['b', 2]]) // { a: 1, b: 2 }
+ */
+export const objectFromEntries = <T extends Record<string | number | symbol, any>>(entries: Iterable<readonly [string | number, T[keyof T]]>) => {
+    const obj: Record<string | number, T[keyof T]> = {};
+    for (const [key, value] of entries) {
+        const parsedKey = typeof key === "string" && /^\d+$/.test(key) ? Number(key) : key;
+        obj[parsedKey] = value;
+    }
+    return obj as T;
+}
+
+/**
+ * 交换对象中的键值对
+ * @param obj - 要交换键值对的对象
+ * @returns 交换后的对象
+ * @example
+ * objectSwitchKV({a: 1, b: 2}) // {1: 'a', 2: 'b'}
+ */
+export const objectSwitchKV = (obj: object) => {
     return Object.fromEntries(Object.entries(obj).map(([k, v]) => [v, k]));
 };
 
